@@ -95,12 +95,12 @@ namespace CsvReader2
                 CsvClass CsvClass = new CsvClass(logTime2, element[1].Trim('"'), element[2].Trim('"'), element[3].Trim('"'), element[4].Trim('"'),
                                                 element[5].Trim('"'), Convert.ToInt32(element[6].Trim('"')), Convert.ToDouble(element[7].Trim('"')),
                                                 element[8].Trim('"'), element[9].Trim('"'), Convert.ToInt32(element[10].Trim('"')));
-                //Adaug pe un rand cu datele citite
-                var rand = tabel.NewRow();
-                if (logTime2 == null)
+                //Adaug pe un rand datele citite
+                DataRow rand = tabel.NewRow();
+                if (CsvClass.LogTime == null)
                     rand["LogTime"] = DBNull.Value;
                 else
-                    rand["LogTime"] = logTime2;
+                    rand["LogTime"] = CsvClass.LogTime;
                 rand["Action"] = CsvClass.Action;
                 rand["FolderPath"] = CsvClass.FolderPath;
                 rand["FileName"] = CsvClass.Filename;
@@ -111,7 +111,7 @@ namespace CsvReader2
                 rand["AgentBrand"] = CsvClass.AgentBrand;
                 rand["AgentVersion"] = CsvClass.AgentVersion;
                 rand["Error"] = CsvClass.Error;
-
+                
                 tabel.Rows.Add(rand);
 
             }
