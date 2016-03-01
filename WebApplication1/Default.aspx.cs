@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -14,9 +15,44 @@ namespace WebApplication1
 
         }
 
-        protected void SubmitButton_Click(object sender, EventArgs e)
+
+
+        protected void submitButton_Click(object sender, EventArgs e)
         {
-            finalLabel.Text = NameTextBoc.Text;
+            //DateTime startDateTime;
+            //DateTime endDateTime;
+
+            //string startDate = null;
+            //string endDate = null;
+            //string ip = TextBox3.Text;
+
+            //if( DateTime.TryParse(textBoxStartDate.Text,out startDateTime))
+            //{
+            //    startDate = startDateTime.ToShortDateString();
+            //}
+
+            //if (DateTime.TryParse(textBoxEndDate.Text, out endDateTime))
+            //{
+            //    endDate = endDateTime.ToShortDateString();
+            //}
+            //if (TextBox3.Text == "")
+            //{
+            //    ip = null;
+            //}
+            //SqlDataSource2.SelectParameters.Clear();
+            //SqlDataSource2.SelectCommand = "selectProcedure";
+            //SqlDataSource2.SelectCommandType = SqlDataSourceCommandType.StoredProcedure;
+            //SqlDataSource2.
+            //SqlDataSource2.SelectParameters.Add("startDate", startDate);
+            //SqlDataSource2.SelectParameters.Add("endDate", endDate);
+            //SqlDataSource2.SelectParameters.Add("Ip", ip);
+            //SqlDataSource2.SelectParameters.
+         
+        }
+
+        protected void textBoxStartDate_TextChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }
