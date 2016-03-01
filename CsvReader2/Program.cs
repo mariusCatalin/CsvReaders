@@ -163,7 +163,7 @@ namespace CsvReader2
             
         }
         
-
+        //Functia care muta fisierul
         static void moveFile(string path)
         {
             FileInfo fisier = new FileInfo(path);

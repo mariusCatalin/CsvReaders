@@ -46,6 +46,7 @@
                         <asp:Label ID="Label2" runat="server" Text="Start Date"></asp:Label>
                     </td>
                     <td class="auto-style4">
+                        <asp:CompareValidator ID="CompareValidator1" runat="server" ErrorMessage="Data introdusa nu este corecta" Type="Date" ControlToValidate="TextBoxStartDate" Operator="DataTypeCheck" ></asp:CompareValidator>
                         <asp:TextBox ID="TextBoxStartDate" runat="server" Style="height: 22px" TextMode="DateTime" OnTextChanged="textBoxStartDate_TextChanged"></asp:TextBox>
                         <ajaxToolkit:CalendarExtender ID="textBoxStartDate_CalendarExtender" runat="server" TargetControlID="textBoxStartDate" PopupButtonID="textBoxStartDate" Format="MM/dd/yyyy" />
                     </td>
@@ -55,6 +56,7 @@
                         <asp:Label ID="Label3" runat="server" Text="End Date"></asp:Label>
                     </td>
                     <td class="auto-style5">
+                        <asp:CompareValidator ID="CompareValidator2" runat="server" ErrorMessage="Data introdusa nu este corecta" Type="Date" ControlToValidate="TextBoxEndDate" Operator="DataTypeCheck"></asp:CompareValidator>
                         <asp:TextBox ID="TextBoxEndDate" runat="server" Style="height: 22px" TextMode="DateTime"></asp:TextBox>
                         <ajaxToolkit:CalendarExtender ID="textBoxEndDate_CalendarExtender" runat="server" TargetControlID="textBoxEndDate" PopupButtonID="textBoxEndDate" Format="MM/dd/yyyy" />
                     </td>
