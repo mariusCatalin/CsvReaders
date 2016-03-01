@@ -12,7 +12,8 @@ namespace WebApplication1
     {
         protected void Page_Load(object sender, EventArgs e)
         {
-
+            TextBoxStartDate.Attributes.Add("readonly", "readonly");
+            TextBoxEndDate.Attributes.Add("readonly", "readonly");
         }
 
 
@@ -50,9 +51,14 @@ namespace WebApplication1
          
         }
 
-        protected void textBoxStartDate_TextChanged(object sender, EventArgs e)
+        protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
         {
 
+        }
+
+        protected void TextBoxStartDate_TextChanged(object sender, EventArgs e)
+        {
+            TextBoxStartDate.Attributes["on click"] = "";
         }
     }
 }

@@ -10,25 +10,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <style type="text/css">
         .auto-style1 {
-            width: 37%;
-        }
-
-        .auto-style2 {
-            width: 80px;
+            width: 43%;
+            height: 122px;
+            margin-bottom: 0px;
         }
 
         .auto-style3 {
             width: 80px;
-            height: 26px;
-        }
-
-        .auto-style4 {
-            width: 35px;
+            height: 8px;
         }
 
         .auto-style5 {
-            width: 35px;
-            height: 26px;
+            width: 230px;
+            height: 8px;
+        }
+        .auto-style6 {
+            width: 80px;
+            height: 53px;
+        }
+        .auto-style7 {
+            width: 230px;
+            height: 53px;
+        }
+        .auto-style8 {
+            width: 80px;
+            height: 43px;
+        }
+        .auto-style9 {
+            width: 230px;
+            height: 43px;
         }
     </style>
 </head>
@@ -42,13 +52,13 @@
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <table class="auto-style1">
                 <tr>
-                    <td class="auto-style2">
+                    <td class="auto-style8">
                         <asp:Label ID="Label2" runat="server" Text="Start Date"></asp:Label>
                     </td>
-                    <td class="auto-style4">
-                        <asp:CompareValidator ID="CompareValidator1" runat="server" ErrorMessage="Data introdusa nu este corecta" Type="Date" ControlToValidate="TextBoxStartDate" Operator="DataTypeCheck" ></asp:CompareValidator>
-                        <asp:TextBox ID="TextBoxStartDate" runat="server" Style="height: 22px" TextMode="DateTime" OnTextChanged="textBoxStartDate_TextChanged"></asp:TextBox>
-                        <ajaxToolkit:CalendarExtender ID="textBoxStartDate_CalendarExtender" runat="server" TargetControlID="textBoxStartDate" PopupButtonID="textBoxStartDate" Format="MM/dd/yyyy" />
+                    <td class="auto-style9">
+                        <asp:TextBox ID="TextBoxStartDate" runat="server" Style="height: 22px" TextMode="DateTime" OnClick="this.value=''" OnTextChanged="TextBoxStartDate_TextChanged"></asp:TextBox>
+                        <ajaxToolkit:CalendarExtender ID="textBoxStartDate_CalendarExtender" runat="server" TargetControlID="textBoxStartDate" PopupButtonID="startDateImage" Format="MM/dd/yyyy" />
+                        <asp:Image ID="startDateImage" runat="server" ImageUrl="~/Calendar-icon.png" />
                     </td>
                 </tr>
                 <tr>
@@ -56,16 +66,16 @@
                         <asp:Label ID="Label3" runat="server" Text="End Date"></asp:Label>
                     </td>
                     <td class="auto-style5">
-                        <asp:CompareValidator ID="CompareValidator2" runat="server" ErrorMessage="Data introdusa nu este corecta" Type="Date" ControlToValidate="TextBoxEndDate" Operator="DataTypeCheck"></asp:CompareValidator>
-                        <asp:TextBox ID="TextBoxEndDate" runat="server" Style="height: 22px" TextMode="DateTime"></asp:TextBox>
-                        <ajaxToolkit:CalendarExtender ID="textBoxEndDate_CalendarExtender" runat="server" TargetControlID="textBoxEndDate" PopupButtonID="textBoxEndDate" Format="MM/dd/yyyy" />
+                        <asp:TextBox ID="TextBoxEndDate" runat="server" Style="height: 22px" OnClick="this.value=''" TextMode="DateTime"></asp:TextBox>
+                        <ajaxToolkit:CalendarExtender ID="textBoxEndDate_CalendarExtender" runat="server" TargetControlID="textBoxEndDate" PopupButtonID="endDateImage" Format="MM/dd/yyyy" />
+                        <asp:Image ID="endDateImage" runat="server" ImageUrl="~/Calendar-icon.png" />
                     </td>
                 </tr>
                 <tr>
-                    <td class="auto-style2">
+                    <td class="auto-style6">
                         <asp:Label ID="Label1" runat="server" Text="Ip"></asp:Label>
                     </td>
-                    <td class="auto-style4">
+                    <td class="auto-style7">
                         <asp:TextBox ID="TextBoxIp" runat="server" Style="height: 22px"></asp:TextBox>
                     </td>
                 </tr>
@@ -78,7 +88,7 @@
 
         </div>
         <p>
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="Id" DataSourceID="SqlDataSource" AllowPaging="True" CellPadding="4" ForeColor="#333333" GridLines="None" AllowSorting="true" EmptyDataText="No data was found!" ShowHeaderWhenEmpty ="true" >
+            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="Id" DataSourceID="SqlDataSource" AllowPaging="True" CellPadding="4" ForeColor="#333333" GridLines="None" AllowSorting="true" EmptyDataText="No data was found!" ShowHeaderWhenEmpty ="true" OnSelectedIndexChanged="GridView1_SelectedIndexChanged" >
                 <AlternatingRowStyle BackColor="White" />
                 <Columns>
                     <asp:BoundField DataField="Id" HeaderText="Id" InsertVisible="False" ReadOnly="True" SortExpression="Id" />
