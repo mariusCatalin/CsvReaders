@@ -32,12 +32,29 @@ namespace CsvReader2
             }
             else
             {
-                //Daca exista fisiere in folder apeleaza functia readAndInsert pentru fiecare fisiere
+                //Daca exista fisiere in folder apeleaza functiile insertIntoDatabase si readCsv pentru fiecare fisiere
                 foreach (string file in checkDir(ConfigurationManager.AppSettings["dirPath"]))
                 {
-                    readAndInsert(file);
+                    if (checkExtension(file) == true)
+                    {
+                        insertIntoDatabase(readCsv(file));
+                    }
+                    
                 }
             }
+        }
+
+        //Verific daca extensia fisierului e .csv si in functie de asta returnez true sau false
+        static bool checkExtension(string path)
+        {
+            bool check = false;
+            FileInfo fisier = new FileInfo(path);
+            if (fisier.Extension == ".csv")
+            {
+                check = true;
+            }
+
+            return check;             
         }
 
         static string[] checkDir(string path)
@@ -56,11 +73,11 @@ namespace CsvReader2
         }
 
 
-        static void readAndInsert(string path)
+        static DataTable readCsv(string path)
         {
             //Creez un tabel de tip DataTable in care o sa introduc valorile din CSV
             DataTable tabel = new DataTable("Csv");
-            tabel.Columns.Add("LogTime",typeof(DateTime));
+            tabel.Columns.Add("LogTime", typeof(DateTime));
             tabel.Columns.Add("Action", typeof(string));
             tabel.Columns.Add("FolderPath", typeof(string));
             tabel.Columns.Add("FileName", typeof(string));
@@ -111,32 +128,44 @@ namespace CsvReader2
                 rand["AgentBrand"] = CsvClass.AgentBrand;
                 rand["AgentVersion"] = CsvClass.AgentVersion;
                 rand["Error"] = CsvClass.Error;
-                
+
                 tabel.Rows.Add(rand);
 
             }
             reader.Close();
+            //Dupa ce am citit csv-ul, il mut intr-o alta locatie(marcare)
+            moveFile(path);
 
+            return tabel;
 
+        }
+
+        static void insertIntoDatabase(DataTable tabel)
+        {
             using (SqlConnection dbConn = new SqlConnection(ConfigurationManager.AppSettings["dbConnInfo"]))
             {
-                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(dbConn)) 
+                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(dbConn))
                 {
                     //Mapez coloanele din tabela din baza de date cu coloanele din DataTable
                     for (int i = 0; i < tabel.Columns.Count; i++)
                     {
-                        bulkCopy.ColumnMappings.Add(i, i+1);
+                        bulkCopy.ColumnMappings.Add(i, i + 1);
                     }
-     
+
                     //Copiez tabelul de tip DataTable in Baza de date
                     bulkCopy.DestinationTableName = ConfigurationManager.AppSettings["destTable"];
                     dbConn.Open();
                     bulkCopy.WriteToServer(tabel);
                     dbConn.Close();
                 }
-                
+
             }
-            //Dupa ce am citit si inserat csv-ul in baza de date, il mut intr-o alta locatie(marcare)
+            
+        }
+        
+
+        static void moveFile(string path)
+        {
             FileInfo fisier = new FileInfo(path);
             fisier.MoveTo(ConfigurationManager.AppSettings["destDir"] + fisier.Name);
         }
