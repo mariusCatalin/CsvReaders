@@ -1,47 +1,45 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using System.Configuration;
-using System.Data;
+using CsvNamespace;
 using System.Globalization;
-using CsvReader;
-using System.Xml.Linq;
+using System.Data.SqlClient;
 
-[assembly: log4net.Config.XmlConfigurator(Watch = true)]
-
-namespace CsvReader2
+namespace ClassLibrary
 {
-    class Program
+    public class ReadAndWriteCsv
+
     {
+        public string SourceDir { get; set; }
+        public string DestDir { get; set; }
+        public string ConnString { get; set; }
+        public string DestTable { get; set; }
 
-        private static readonly log4net.ILog log = log4net.LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
 
-        static void Main(string[] args)
+        public ReadAndWriteCsv(string sourceDir, string destDir, string connString,string destTable)
         {
-            start();
+            SourceDir = sourceDir;
+            DestDir = DestDir;
+            ConnString = connString;
+            DestTable = destTable;
         }
-
-
-
-        public static void start()
+        public void start()
         {
-            log.Info("Start");
-            log.Info("Se verifica continutul folderului.");
-
+            
             // Daca nu exista fisiere in folder returneaza un mesaj
-            if (checkDir(ConfigurationManager.AppSettings["dirPath"]) == null)
+            if (checkDir(SourceDir) == null)
             {
-                log.Warn("Nu exista fisiere in folder");
+        
             }
             else
             {
-                log.Info(String.Format("In folder sunt {0} fisiere", checkDir(ConfigurationManager.AppSettings["dirPath"]).Length.ToString()));
+               
                 //Daca exista fisiere in folder apeleaza functiile insertIntoDatabase si readCsv pentru fiecare fisiere
-                foreach (string file in checkDir(ConfigurationManager.AppSettings["dirPath"]))
+                foreach (string file in checkDir(SourceDir))
                 {
                     if (checkExtension(file) == true)
                     {
@@ -54,7 +52,7 @@ namespace CsvReader2
         }
 
         //Verific daca extensia fisierului e .csv si in functie de asta returnez true sau false
-        static bool checkExtension(string path)
+        public bool checkExtension(string path)
         {
             bool check = false;
             FileInfo fisier = new FileInfo(path);
@@ -82,7 +80,7 @@ namespace CsvReader2
         }
 
 
-        static DataTable readCsv(string path)
+        public DataTable readCsv(string path)
         {
             //Creez un tabel de tip DataTable in care o sa introduc valorile din CSV
             DataTable tabel = new DataTable("Csv");
@@ -98,7 +96,7 @@ namespace CsvReader2
             tabel.Columns.Add("AgentVersion", typeof(string));
             tabel.Columns.Add("Error", typeof(int));
 
-            log.Info(String.Format("Incepe parsarea fisierului: {0}", path));
+            
             try
             {
                 // Pentru citirea datelor din CSV folosesc StreamReader
@@ -148,23 +146,23 @@ namespace CsvReader2
             }
             catch (Exception e)
             {
-                log.Error("Au fost probleme la parsarea fisierului fisierului:", e);
+                
             }
             finally
             {
                 //Dupa ce am citit csv-ul, il mut intr-o alta locatie(marcare)
                 moveFile(path);
             }
-            
-            
+
+
 
             return tabel;
 
         }
 
-        static void insertIntoDatabase(DataTable tabel)
-        { 
-            using (SqlConnection dbConn = new SqlConnection(ConfigurationManager.AppSettings["dbConnInfo"]))
+        public void insertIntoDatabase(DataTable tabel)
+        {
+            using (SqlConnection dbConn = new SqlConnection(ConnString))
             {
                 using (SqlBulkCopy bulkCopy = new SqlBulkCopy(dbConn))
                 {
@@ -175,19 +173,19 @@ namespace CsvReader2
                     }
 
                     //Copiez tabelul de tip DataTable in Baza de date
-                    bulkCopy.DestinationTableName = ConfigurationManager.AppSettings["destTable"];
+                    bulkCopy.DestinationTableName = DestTable;
                     dbConn.Open();
                     try
                     {
-                        log.Info("Incepe insertul in baza de date");
+                        
                         bulkCopy.WriteToServer(tabel);
                         dbConn.Close();
                     }
-                    catch(Exception e)
+                    catch (Exception e)
                     {
-                        log.Error("Au aparut probleme la insert", e);
+                        
                     }
-                    
+
                 }
             }
 
@@ -196,20 +194,19 @@ namespace CsvReader2
         }
 
         //Functia care muta fisierul
-        static void moveFile(string path)
+        private void moveFile(string path)
         {
-            log.Info(String.Format("Fisierul {0} se muta in noua destinatie", path));
+            
             try
             {
                 FileInfo fisier = new FileInfo(path);
-                fisier.MoveTo(ConfigurationManager.AppSettings["destDir"] + fisier.Name);
+                fisier.MoveTo(DestDir + fisier.Name);
             }
             catch (Exception e)
             {
-                log.Error("Fisierul nu a putut fi mutat", e);
+                
             }
         }
-
 
     }
 }
