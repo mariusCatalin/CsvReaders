@@ -14,10 +14,12 @@ namespace testDllApp
             string sourceDir = @"D:\Testt";
             string destDir = @"D:\Testt2";
             string connString = @"Data Source=MARIUSCST-MBL;Initial Catalog=CsvDatabase;Persist Security Info=True;User ID=sa;Password=1234%asd";
-            string destTable = "dbo.CsvTable";
+            string destTable = "dbo.CsvTable";  
 
             ReadAndWriteCsv test = new ReadAndWriteCsv(sourceDir, destDir, connString, destTable);
             test.start();
+            
+
         }
     }
 }

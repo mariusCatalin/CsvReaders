@@ -8,36 +8,65 @@ using System.Threading.Tasks;
 using CsvNamespace;
 using System.Globalization;
 using System.Data.SqlClient;
+using log4net;
+using log4net.Repository.Hierarchy;
+using log4net.Appender;
+using log4net.Config;
+using log4net.Layout;
+
+
 
 namespace ClassLibrary
 {
     public class ReadAndWriteCsv
-
     {
         public string SourceDir { get; set; }
         public string DestDir { get; set; }
         public string ConnString { get; set; }
         public string DestTable { get; set; }
+        public ILog Log { get; set; }
 
 
-        public ReadAndWriteCsv(string sourceDir, string destDir, string connString,string destTable)
+
+
+
+        public ReadAndWriteCsv(string sourceDir, string destDir, string connString, string destTable)
         {
             SourceDir = sourceDir;
-            DestDir = DestDir;
+            DestDir = destDir;
             ConnString = connString;
             DestTable = destTable;
+
+            Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
+            hierarchy.Root.RemoveAllAppenders(); /*Remove any other appenders*/
+            FileAppender fileAppender = new FileAppender();
+            fileAppender.LockingModel = new FileAppender.MinimalLock();
+            fileAppender.File = @"D:\Log\MyLogg.txt";
+            PatternLayout pl = new PatternLayout();
+            pl.ConversionPattern = "%date %timestamp [%thread] %level %logger - %message %exception %newline";
+            pl.ActivateOptions();
+            fileAppender.Layout = pl;
+            fileAppender.ActivateOptions();
+
+            BasicConfigurator.Configure(fileAppender);
+            Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         }
+
+
+
         public void start()
         {
-            
+            Log.Info("Start");
+            Log.Info(String.Format("Se verifica continutul folderului: {0}", SourceDir));
+
             // Daca nu exista fisiere in folder returneaza un mesaj
             if (checkDir(SourceDir) == null)
             {
-        
+                Log.Warn("Nu exista fisiere in folder");
             }
             else
             {
-               
+                Log.Info(String.Format("In folder sunt {0} fisiere", checkDir(SourceDir).Length.ToString()));
                 //Daca exista fisiere in folder apeleaza functiile insertIntoDatabase si readCsv pentru fiecare fisiere
                 foreach (string file in checkDir(SourceDir))
                 {
@@ -52,35 +81,51 @@ namespace ClassLibrary
         }
 
         //Verific daca extensia fisierului e .csv si in functie de asta returnez true sau false
-        public bool checkExtension(string path)
+        private bool checkExtension(string path)
         {
             bool check = false;
-            FileInfo fisier = new FileInfo(path);
-            if (fisier.Extension == ".csv")
+            try
             {
-                check = true;
+                FileInfo fisier = new FileInfo(path);
+                if (fisier.Extension == ".csv")
+                {
+                    check = true;
+                }
             }
-
+            catch(Exception e)
+            {
+                Log.Error(String.Format("Au fost probleme la verificarea extensiei fisierului: {0}", path), e);
+            }
             return check;
         }
 
-        static string[] checkDir(string path)
+        private string[] checkDir(string path)
         {
             //Verifica daca exista fisiere in folder
             //Daca exista returneaza un array cu path-urile
             //Daca nu exista retuneaza null
+
             string[] filesInDir = null;
-            if (Directory.EnumerateFiles(path).Any() == true)
+
+            try
             {
-                filesInDir = Directory.GetFiles(path);
+                if (Directory.EnumerateFiles(path).Any() == true)
+                {
+                    filesInDir = Directory.GetFiles(path);
+                }
+            }
+            catch(Exception e)
+            {
+                Log.Error(String.Format("Au fost probleme la verificarea folderului:{0}", path), e);
             }
 
             return filesInDir;
 
+
         }
 
 
-        public DataTable readCsv(string path)
+        private DataTable readCsv(string path)
         {
             //Creez un tabel de tip DataTable in care o sa introduc valorile din CSV
             DataTable tabel = new DataTable("Csv");
@@ -96,7 +141,7 @@ namespace ClassLibrary
             tabel.Columns.Add("AgentVersion", typeof(string));
             tabel.Columns.Add("Error", typeof(int));
 
-            
+            Log.Info(String.Format("Incepe parsarea fisierului: {0}", path));
             try
             {
                 // Pentru citirea datelor din CSV folosesc StreamReader
@@ -146,7 +191,8 @@ namespace ClassLibrary
             }
             catch (Exception e)
             {
-                
+                Log.Error("Au fost probleme la parsarea fisierului fisierului:", e);
+
             }
             finally
             {
@@ -177,13 +223,13 @@ namespace ClassLibrary
                     dbConn.Open();
                     try
                     {
-                        
+                        Log.Info("Incepe insertul in baza de date");
                         bulkCopy.WriteToServer(tabel);
                         dbConn.Close();
                     }
                     catch (Exception e)
                     {
-                        
+                        Log.Error("Au aparut probleme la insert", e);
                     }
 
                 }
@@ -196,15 +242,15 @@ namespace ClassLibrary
         //Functia care muta fisierul
         private void moveFile(string path)
         {
-            
+            Log.Info(String.Format("Fisierul {0} se muta in noua destinatie", path));
             try
             {
                 FileInfo fisier = new FileInfo(path);
-                fisier.MoveTo(DestDir + fisier.Name);
+                fisier.MoveTo(DestDir + "\\" + fisier.Name);
             }
             catch (Exception e)
             {
-                
+                Log.Error("Fisierul nu a putut fi mutat", e);
             }
         }
 
