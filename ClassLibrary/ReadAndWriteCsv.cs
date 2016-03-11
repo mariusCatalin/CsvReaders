@@ -20,16 +20,14 @@ namespace ClassLibrary
 {
     public class ReadAndWriteCsv
     {
+        //Proprietatile clasei ReadAndWriteCsv
         public string SourceDir { get; set; }
         public string DestDir { get; set; }
         public string ConnString { get; set; }
         public string DestTable { get; set; }
         public ILog Log { get; set; }
 
-
-
-
-
+        //Constructorul clasei
         public ReadAndWriteCsv(string sourceDir, string destDir, string connString, string destTable)
         {
             SourceDir = sourceDir;
@@ -38,7 +36,7 @@ namespace ClassLibrary
             DestTable = destTable;
 
             Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
-            hierarchy.Root.RemoveAllAppenders(); /*Remove any other appenders*/
+            hierarchy.Root.RemoveAllAppenders(); 
             FileAppender fileAppender = new FileAppender();
             fileAppender.LockingModel = new FileAppender.MinimalLock();
             fileAppender.File = @"D:\Log\MyLogg.txt";
@@ -67,7 +65,7 @@ namespace ClassLibrary
             else
             {
                 Log.Info(String.Format("In folder sunt {0} fisiere", checkDir(SourceDir).Length.ToString()));
-                //Daca exista fisiere in folder apeleaza functiile insertIntoDatabase si readCsv pentru fiecare fisiere
+                //Daca exista fisiere in folder apeleaza functiile insertIntoDatabase si readCsv pentru fiecare fisier
                 foreach (string file in checkDir(SourceDir))
                 {
                     if (checkExtension(file) == true)
@@ -80,7 +78,7 @@ namespace ClassLibrary
             }
         }
 
-        //Verific daca extensia fisierului e .csv si in functie de asta returnez true sau false
+        //Metoda care verifica daca extensia fisierului e .csv si in functie de asta returneaza true sau false
         private bool checkExtension(string path)
         {
             bool check = false;
@@ -99,6 +97,7 @@ namespace ClassLibrary
             return check;
         }
 
+        //Metoda care verifica daca exista fisiere in folder
         private string[] checkDir(string path)
         {
             //Verifica daca exista fisiere in folder
@@ -121,10 +120,9 @@ namespace ClassLibrary
 
             return filesInDir;
 
-
         }
-
-
+    
+        //Metoda care citeste un csv si returneaza datele citite intr-un DataTable
         private DataTable readCsv(string path)
         {
             //Creez un tabel de tip DataTable in care o sa introduc valorile din CSV
@@ -206,6 +204,7 @@ namespace ClassLibrary
 
         }
 
+        //Metoda care insereaza in baza de date un tabel de tip DataTable
         public void insertIntoDatabase(DataTable tabel)
         {
             using (SqlConnection dbConn = new SqlConnection(ConnString))
@@ -218,7 +217,7 @@ namespace ClassLibrary
                         bulkCopy.ColumnMappings.Add(i, i + 1);
                     }
 
-                    //Copiez tabelul de tip DataTable in Baza de date
+                    //Inserez tabelul de tip DataTable in Baza de date
                     bulkCopy.DestinationTableName = DestTable;
                     dbConn.Open();
                     try
@@ -235,11 +234,9 @@ namespace ClassLibrary
                 }
             }
 
-
-
         }
 
-        //Functia care muta fisierul
+        //Metoda care muta fisierul
         private void moveFile(string path)
         {
             Log.Info(String.Format("Fisierul {0} se muta in noua destinatie", path));

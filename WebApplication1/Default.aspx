@@ -56,7 +56,7 @@
                         <asp:Label ID="Label2" runat="server" Text="Start Date"></asp:Label>
                     </td>
                     <td class="auto-style9">
-                        <asp:TextBox ID="TextBoxStartDate" runat="server" Style="height: 22px" TextMode="DateTime" OnClick="this.value=''" OnTextChanged="TextBoxStartDate_TextChanged"></asp:TextBox>
+                        <asp:TextBox ID="TextBoxStartDate" runat="server" Style="height: 22px" TextMode="DateTime" OnClick="this.value=''"></asp:TextBox>
                         <ajaxToolkit:CalendarExtender ID="textBoxStartDate_CalendarExtender" runat="server" TargetControlID="textBoxStartDate" PopupButtonID="startDateImage" Format="MM/dd/yyyy" />
                         <asp:Image ID="startDateImage" runat="server" ImageUrl="~/Calendar-icon.png" />
                     </td>
@@ -88,7 +88,7 @@
 
         </div>
         <p>
-            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="Id" DataSourceID="SqlDataSource" AllowPaging="True" CellPadding="4" ForeColor="#333333" GridLines="None" AllowSorting="true" EmptyDataText="No data was found!" ShowHeaderWhenEmpty ="true" OnSelectedIndexChanged="GridView1_SelectedIndexChanged" >
+            <asp:GridView ID="GridView1" runat="server" AutoGenerateColumns="False" DataKeyNames="Id" AllowPaging="True" CellPadding="4" ForeColor="#333333" GridLines="None" AllowSorting="true" EmptyDataText="No data was found!" ShowHeaderWhenEmpty ="true" OnPageIndexChanging="GridView1_PageIndexChanging" OnSorting="GridView1_Sorting" >
                 <AlternatingRowStyle BackColor="White" />
                 <Columns>
                     <asp:BoundField DataField="Id" HeaderText="Id" InsertVisible="False" ReadOnly="True" SortExpression="Id" />
@@ -115,13 +115,13 @@
                 <SortedDescendingCellStyle BackColor="#D4DFE1" />
                 <SortedDescendingHeaderStyle BackColor="#15524A" />
             </asp:GridView>
-            <asp:SqlDataSource ID="SqlDataSource" runat="server" ConnectionString="<%$ ConnectionStrings:CsvDatabaseConnectionString %>" SelectCommand="selectProcedure" SelectCommandType="StoredProcedure" CancelSelectOnNullParameter="false">
+            <%--<asp:SqlDataSource ID="SqlDataSource" runat="server" ConnectionString="<%$ ConnectionStrings:CsvDatabaseConnectionString %>" SelectCommand="selectProcedure" SelectCommandType="StoredProcedure" CancelSelectOnNullParameter="false">
                 <SelectParameters>
                     <asp:ControlParameter ControlID="TextBoxStartDate" DefaultValue="" Name="startDate"  PropertyName="Text" ConvertEmptyStringToNull="true" Type="DateTime"/>
                     <asp:ControlParameter ControlID="TextBoxEndDate" DefaultValue="" Name="endDate" PropertyName="Text" ConvertEmptyStringToNull="true" Type="DateTime" />
                     <asp:ControlParameter ControlID="TextBoxIp" Name="Ip" PropertyName="Text" ConvertEmptyStringToNull="true" Type="String" />
                 </SelectParameters>
-            </asp:SqlDataSource>
+            </asp:SqlDataSource>--%>
         </p>
         <p>
             &nbsp;

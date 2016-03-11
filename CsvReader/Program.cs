@@ -111,33 +111,5 @@ namespace CsvReader
             FileInfo fisier = new FileInfo(path);
             fisier.MoveTo(ConfigurationManager.AppSettings["destDir"] + fisier.Name);
         }
-
-
-
-        /*
-        static void test()
-        {
-            DateTime azi = DateTime.Now;
-            string connString = "Data Source=MARIUSCST-MBL;Initial Catalog=CsvDatabase;Persist Security Info=True;User ID=sa;Password=1234%asd";
-            using (SqlConnection dbConn = new SqlConnection(connString))
-            {
-
-                dbConn.Open();
-                var transaction = dbConn.BeginTransaction();
-
-                string insertQuery = "INSERT INTO dbo.CSvTable(LogTime, Username, Duration) Values(@0,@1,@2)";
-                SqlCommand insert = new SqlCommand(insertQuery, dbConn);
-
-                insert.Parameters.Add(new SqlParameter("0", azi));
-                insert.Parameters.Add(new SqlParameter("1", "marius.catalin"));
-                insert.Parameters.Add(new SqlParameter("2", 20.44));
-                transaction.Commit();
-                insert.ExecuteNonQuery();
-
-                //string selectQuery = "SELECT * from dbo.CsvTable";
-                //SqlCommand select = new SqlCommand(selectQuery, dbConn);
-            }
-
-        }*/
     }
 }

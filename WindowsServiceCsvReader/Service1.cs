@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ClassLibrary;
 using System.Timers;
+using Microsoft.Win32;
 
 namespace WindowsServiceCsvReader
 {
@@ -25,16 +26,13 @@ namespace WindowsServiceCsvReader
         private string connString;
         private string destTable;
 
+       
+
         protected override void OnStart(string[] args)
         {
-            base.OnStart(args);
-            sourceDir = args[0];
-            destDir = args[1];
-            connString = args[2];
-            destTable = args[3];
-
-
+            //Initializez timer-ul la 20 de secunde
             myTimer = new Timer();
+            myTimer.Elapsed += new ElapsedEventHandler(setParameters);
             myTimer.Elapsed += new ElapsedEventHandler(timeElapsed);
             myTimer.Interval = 1000 * 20;
             myTimer.Enabled = true;
@@ -49,8 +47,19 @@ namespace WindowsServiceCsvReader
 
         }
 
+        private void setParameters(object sender, ElapsedEventArgs e)
+        {
+            const string regKey = @"HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\CsvReaderService";
+            sourceDir = Registry.GetValue(regKey, "sourceDirectory", null).ToString();
+            destDir = Registry.GetValue(regKey, "destinationDirectory", null).ToString();
+            connString = Registry.GetValue(regKey, "connString", null).ToString();
+            destTable = Registry.GetValue(regKey, "destTable", null).ToString();
+            
+        }
+
         protected override void OnStop()
         {
+            //Daca se opreste serviciul timerul se dezactiveaza
             myTimer.Enabled = false;
         }
     }
