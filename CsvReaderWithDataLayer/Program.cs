@@ -14,7 +14,7 @@ namespace CsvReaderWithDataLayer
         {
             DB db = new DB();
             Console.WriteLine(db.ConnectionString);
-            var lista = db.readDatabase(null, null, null);
+            List<CsvClass> lista = db.readDatabase(null, null, null);
             foreach(CsvClass obiect in lista)
             {
                 Console.WriteLine(obiect.LogTime.ToString());

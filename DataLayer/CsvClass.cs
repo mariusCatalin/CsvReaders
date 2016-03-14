@@ -17,18 +17,18 @@ namespace DataLayer
         public string Filename { get; set; }
         public string Username { get; set; }
         public string IpAdress { get; set; }
-        public int XferSize { get; set; }
-        public double Duration { get; set; }
+        public int? XferSize { get; set; }
+        public double? Duration { get; set; }
         public string AgentBrand { get; set; }
         public string AgentVersion { get; set; }
-        public int Error { get; set; }
+        public int? Error { get; set; }
 
         public CsvClass()
         {
 
         }
 
-        public CsvClass(DateTime? logTime, string action, string folderPath, string fileName, string username, string ipAdress, int xferSize, double duration, string agentBrand, string agentVersion, int error)
+        public CsvClass(DateTime? logTime, string action, string folderPath, string fileName, string username, string ipAdress, int? xferSize, double? duration, string agentBrand, string agentVersion, int? error)
         {
             LogTime = logTime;
             Action = action;
