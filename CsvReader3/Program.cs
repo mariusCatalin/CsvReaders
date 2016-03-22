@@ -10,6 +10,14 @@ using System.Data;
 
 namespace CsvReader3
 {
+    //Proiectul CsvReader3
+    //BEGIN
+    //Ma uit in folder daca exista fisere
+    //Daca exista fisiere, pentru fiecare fisier trimit calea si apelez o procedura stocata
+    //Procedura stocata preia calea si executa ea si parsarea fisierului si insertul in baza
+    //Vezi procedura stocata in folder Procedura stocata(folosesc Insert bulk(functie din SQL server))
+    //Mut fisierul
+    //END
     class Program
     {
         static void Main(string[] args)

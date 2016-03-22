@@ -9,6 +9,16 @@ using System.Globalization;
 using System.Configuration;
 using System.Data;
 
+//Proiect CsvReader
+//BEGIN
+//Verific folder-ul
+//Daca exista fisiere le parsez
+//Fiecare rand citit reprezinta un obiect
+//Obiectele citite le pun intr-o lista
+//Inserez lista in Baza de data cu ajutorul unei proceduri stocate
+//Mut fisierul dupa insert
+//END
+
 namespace CsvReader
 {
     class Program

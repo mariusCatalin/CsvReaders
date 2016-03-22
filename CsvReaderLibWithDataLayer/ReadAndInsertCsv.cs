@@ -18,8 +18,8 @@ namespace CsvReaderLibWithDataLayer
     public class ReadAndInsertCsv
     {
         //Proprietatile clasei ReadAndWriteCsv
-        public string SourceDir { get; set; }
-        public string DestDir { get; set; }
+        private string SourceDir { get; set; }
+        private string DestDir { get; set; }
         public ILog Log { get; set; }
 
         //Constructorul clasei
@@ -28,6 +28,7 @@ namespace CsvReaderLibWithDataLayer
             SourceDir = sourceDir;
             DestDir = destDir;
 
+            //Configurez log4net programatic(library-ul nu are config)
             Hierarchy hierarchy = (Hierarchy)LogManager.GetRepository();
             hierarchy.Root.RemoveAllAppenders();
             FileAppender fileAppender = new FileAppender();
@@ -42,7 +43,8 @@ namespace CsvReaderLibWithDataLayer
             BasicConfigurator.Configure(fileAppender);
             Log = LogManager.GetLogger(System.Reflection.MethodBase.GetCurrentMethod().DeclaringType);
         }
-        public void start()
+        //Metoda pe care apelez dupa instantierea obiectului. E singura publica. Restul sunt private
+        public void Start()
         {
             Log.Info("Start");
             Log.Info(String.Format("Se verifica continutul folderului: {0}", SourceDir));
@@ -60,17 +62,22 @@ namespace CsvReaderLibWithDataLayer
                 {
                     if (checkExtension(file) == true)
                     {
-                        try
+                        foreach(CsvClass csvObject in readCsv(file))
                         {
-                            db.InsertIntoDatabase(readCsv(file));
+                            try
+                            {
+                                db.InsertIntoDatabase(csvObject);
+                            }
+                            catch (SqlException e)
+                            {
+                                Log.Error(String.Format("Fisierul {0} contine date care au mai fost adaugate in baza", file), e);
+                            }
+                            catch (Exception e)
+                            {
+                                Log.Error(String.Format("Nu a reusit insertul in baza pentru fisierul:{0}", file), e);
+                            }
                         }
-                        catch(Exception e)
-                        {
-                            Log.Error("Nu a reusit insertul in baza:", e);
-                        }
-                        
                     }
-
                 }
             }
         }
@@ -119,7 +126,7 @@ namespace CsvReaderLibWithDataLayer
 
         }
 
-        //Metoda care citeste un csv si returneaza datele citite intr-un DataTable
+        //Metoda care citeste un csv si returneaza o lista de obiecte
         private List<CsvClass> readCsv(string path)
         {
             //Creez o lista in care o sa adaug obiectele citite in CSV 
@@ -148,20 +155,22 @@ namespace CsvReaderLibWithDataLayer
                     DateTime logTime;
                     DateTime? logTime2 = null;
 
-                    //Parsez data din CSV
+                    //Parsez data din CSV, daca parsarea nu reuseste datetime-ul o sa fie null
                     bool succes = DateTime.TryParseExact(element[0].Trim('"'), "yyyy-MM-dd HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out logTime);
                     if (succes == true)
                         logTime2 = logTime;
 
-
+                    //Parsez un element de tip Int,daca parsarea nu reuseste int-ul o sa fie null   
                     bool tryParseElement6 = Int32.TryParse(element[6].Trim('"'), out element6);
                     if (tryParseElement6 == true)
                         element6Null = element6;
 
+                    //Parsez un element de tip Double,daca parsarea nu reuseste double-ul o sa fie null   
                     bool tryParseElement7 = Double.TryParse(element[7].Trim('"'), out element7);
                     if (tryParseElement7 == true)
                         element7Null = element7;
 
+                    //Parsez un element de tip Int,daca parsarea nu reuseste int-ul o sa fie null
                     bool tryParseElement10 = Int32.TryParse(element[10].Trim('"'), out element10);
                     if (tryParseElement10 == true)
                         element10Null = element10;
@@ -171,9 +180,10 @@ namespace CsvReaderLibWithDataLayer
                     CsvClass CsvClass = new CsvClass(logTime2, element[1].Trim('"'), element[2].Trim('"'), element[3].Trim('"'), element[4].Trim('"'),
                                                     element[5].Trim('"'), element6Null, element7Null,
                                                     element[8].Trim('"'), element[9].Trim('"'), element10Null);
-
+                    //Adaug obiectul citit in lista
                     lista.Add(CsvClass);
                 }
+                //Dupa ce stream-ul s-a terminat inchid reader-ul
                 reader.Close();
             }
             catch (Exception e)
@@ -187,41 +197,10 @@ namespace CsvReaderLibWithDataLayer
                 moveFile(path);
             }
 
+            //Returnez lista de obiecte
             return lista;
 
         }
-
-        //Metoda care insereaza in baza de date un tabel de tip DataTable
-        /*public void insertIntoDatabase(DataTable tabel)
-        {
-            using (SqlConnection dbConn = new SqlConnection(ConnString))
-            {
-                using (SqlBulkCopy bulkCopy = new SqlBulkCopy(dbConn))
-                {
-                    //Mapez coloanele din tabela din baza de date cu coloanele din DataTable
-                    for (int i = 0; i < tabel.Columns.Count; i++)
-                    {
-                        bulkCopy.ColumnMappings.Add(i, i + 1);
-                    }
-
-                    //Inserez tabelul de tip DataTable in Baza de date
-                    bulkCopy.DestinationTableName = DestTable;
-                    dbConn.Open();
-                    try
-                    {
-                        Log.Info("Incepe insertul in baza de date");
-                        bulkCopy.WriteToServer(tabel);
-                        dbConn.Close();
-                    }
-                    catch (Exception e)
-                    {
-                        Log.Error("Au aparut probleme la insert", e);
-                    }
-
-                }
-            }
-
-        } */
 
         //Metoda care muta fisierul
         private void moveFile(string path)

@@ -15,7 +15,7 @@ using log4net.Config;
 using log4net.Layout;
 
 
-
+//Proiect de tip Library
 namespace ClassLibrary
 {
     public class ReadAndWriteCsv

@@ -12,6 +12,13 @@ using CsvReader;
 using System.Xml.Linq;
 
 [assembly: log4net.Config.XmlConfigurator(Watch = true)]
+//Proiectul CSV Reader2
+//BEGIN
+//Parse CSV-ul ->
+//Datele parsate le pun intr-un DataTable ->
+//Inserez DataTable in baza cu ajutorul SqlBulkCopy 
+//Mut fisierul
+//END
 
 namespace CsvReader2
 {
